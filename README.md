@@ -1,4 +1,3 @@
-````markdown
 # 🧑‍🌾 AgriWealth Livestock AI Agent
 
 ---
@@ -11,27 +10,29 @@ The agent focuses primarily on **translating natural language queries into safe 
 
 ### Key Features
 
-- **Segregated Database Schema:** 12 tables (4 Core, 4 Health, 4 Production) split by species (Cow, Goat, Sheep, Chicken).  
-- **Multi-Step Workflow:** Input routing → SQL planning → Safe execution → Result synthesis → Error recovery.  
-- **SQL Safety Enforcement:** Only `SELECT` queries are allowed, protecting sensitive farm data.  
-- **Actionable Advice:** Raw data is contextualized with life-stage info (derived from birth dates) to provide recommendations that farmers can act on immediately.  
+- **Segregated Database Schema:** 12 tables (4 Core, 4 Health, 4 Production) split by species (Cow, Goat, Sheep, Chicken)  
+- **Multi-Step Workflow:** Input routing → SQL planning → Safe execution → Result synthesis → Error recovery  
+- **SQL Safety Enforcement:** Only `SELECT` queries are allowed, protecting sensitive farm data  
+- **Actionable Advice:** Raw data is contextualized with life-stage info (derived from birth dates) to provide actionable recommendations  
 
 ---
 
 ## 📊 Agent Interconnection Diagram
-<img width="1024" height="1024" alt="Image" src="https://github.com/user-attachments/assets/c1afe1c8-57e4-4ff7-8d35-808a499d0382" />
+
+![Agent Interconnection Diagram](https://github.com/user-attachments/assets/c1afe1c8-57e4-4ff7-8d35-808a499d0382)
+
 ---
 
 ## 📁 Files & Modules Overview
 
 | File / Module | Description & Key Components |
-| --- | --- |
-| **`main.py`** | CLI interface and workflow runner. Initializes the `AgentState` and invokes the compiled LangGraph workflow (`app`). Handles user inputs and displays results. |
-| **`agriwealth_agent.py`** | Core agent logic and LangGraph workflow. Includes: <br>• `get_database_schema()` – Returns schema of all tables.<br>• `get_llm()` – LLM factory for Gemini integration.<br>• `is_sql_safe()` – SQL safety validator.<br>• Agent functions: `db_entry_agent`, `convert_nl_to_sql`, `execute_multi_sql`, `generate_human_readable_answer`, `regenerate_query`.<br>• Compilation of the **LangGraph workflow**. |
-| **`state.py`** | Central data models. Defines `AgentState` (TypedDict) to maintain context, and Pydantic models (`ConvertToSQL`, `RewrittenQuestion`) for structured LLM output. |
-| **`generate_data.py`** | Utility to generate and populate `agriwealth_livestock.db` with synthetic, realistic livestock data following the 12-table schema. |
-| **`agriwealth_livestock.db`** | Runtime SQLite database containing livestock records (generated via `generate_data.py`). **Not committed to Git.** |
-| **`.env`** | Environment variables (e.g., `GEMINI_API_KEY`). **Not committed to Git.** |
+|---------------|-----------------------------|
+| **`main.py`** | CLI interface and workflow runner. Initializes `AgentState` and invokes LangGraph workflow (`app`). Handles user inputs and displays results |
+| **`agriwealth_agent.py`** | Core agent logic and LangGraph workflow. Functions include: <br>• `get_database_schema()` – Returns schema<br>• `get_llm()` – Gemini LLM factory<br>• `is_sql_safe()` – SQL safety check<br>• Agents: `db_entry_agent`, `convert_nl_to_sql`, `execute_multi_sql`, `generate_human_readable_answer`, `regenerate_query` |
+| **`state.py`** | Central data models. `AgentState` (TypedDict) and Pydantic models (`ConvertToSQL`, `RewrittenQuestion`) for structured LLM output |
+| **`generate_data.py`** | Generates and populates `agriwealth_livestock.db` with realistic synthetic data |
+| **`agriwealth_livestock.db`** | Runtime SQLite database containing livestock records (generated via `generate_data.py`). **Not committed to Git** |
+| **`.env`** | Environment variables (e.g., `GEMINI_API_KEY`). **Not committed to Git** |
 
 ---
 
@@ -44,7 +45,7 @@ The agent focuses primarily on **translating natural language queries into safe 
 
 ```bash
 pip install langgraph langchain-google-genai sqlalchemy pydantic python-dotenv faker
-````
+```
 
 ### Setup Steps
 
@@ -62,33 +63,29 @@ GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
 python generate_data.py
 ```
 
-This creates `agriwealth_livestock.db` with all 12 tables and synthetic data.
+Creates `agriwealth_livestock.db` with all 12 tables and synthetic data.
 
-3. **Run the Main Application**
+3. **Run Main Application**
 
 ```bash
 python main.py
 ```
 
-This launches the interactive CLI for querying livestock data.
+Launches the interactive CLI for querying livestock data.
 
 ---
 
 ## 👩‍💻 Usage Instructions (Agent Modes)
 
-The agent operates in **3 modes**, which determine the workflow path in LangGraph:
-
-| Mode  | Entry Point               | Function                                                                     | Example Query                                                   |
-| ----- | ------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| **1** | `db_entry_agent`          | **Core data analysis:** Translates NL → SQL → Executes → Synthesizes results | *“What are the last 3 vaccination dates for cow COW.1?”*        |
-| **2** | `disease_diagnosis_agent` | **Simulated urgent health advice** based on symptoms                         | *“My goat has fever and diarrhea, what is the best first aid?”* |
-| **3** | `web_research_agent`      | **General advice / best practices** using simulated external info            | *“How often should I deworm my goats?”*                         |
+| Mode | Entry Point | Function | Example Query |
+|------|------------|---------|---------------|
+| **1** | `db_entry_agent` | Core data analysis: NL → SQL → Execution → Result synthesis | “What are the last 3 vaccination dates for cow COW.1?” |
+| **2** | `disease_diagnosis_agent` | Simulated urgent health advice based on symptoms | “My goat has fever and diarrhea, what is the best first aid?” |
+| **3** | `web_research_agent` | General advice / best practices using simulated external info | “How often should I deworm my goats?” |
 
 ---
 
 ## 💾 Database Schema
-
-The database is fully **segregated** to prevent accidental cross-species queries.
 
 ### Table Naming Convention
 
@@ -96,47 +93,47 @@ The database is fully **segregated** to prevent accidental cross-species queries
 [SPECIES]_[CATEGORY]
 ```
 
-* SPECIES: `cow`, `goat`, `sheep`, `chicken`
-* CATEGORY: `health_records`, `production_records`
+* SPECIES: `cow`, `goat`, `sheep`, `chicken`  
+* CATEGORY: `health_records`, `production_records`  
 
 ### Core Tables (e.g., `cows`)
 
-| Column       | Type      | Description                                 |
-| ------------ | --------- | ------------------------------------------- |
-| `animal_id`  | TEXT (PK) | Unique identifier (e.g., `COW.1`)           |
-| `name`       | TEXT      | Animal name                                 |
-| `breed`      | TEXT      | Breed                                       |
-| `birth_date` | DATE      | Used for age calculation                    |
+| Column       | Type      | Description |
+|-------------|-----------|-------------|
+| `animal_id`  | TEXT (PK) | Unique identifier (e.g., `COW.1`) |
+| `name`       | TEXT      | Animal name |
+| `breed`      | TEXT      | Breed |
+| `birth_date` | DATE      | Age calculation |
 | `status`     | TEXT      | `Active`, `Sold`, `Deceased`, `Quarantined` |
-| `weight_kg`  | REAL      | Current weight                              |
+| `weight_kg`  | REAL      | Current weight |
 
 ### Health Records Tables (e.g., `cow_health_records`)
 
-| Column        | Type         | Description                                                  |
-| ------------- | ------------ | ------------------------------------------------------------ |
-| `record_id`   | INTEGER (PK) | Record primary key                                           |
-| `animal_id`   | TEXT (FK)    | Links to core table                                          |
-| `record_date` | DATE         | Date of the health event                                     |
+| Column        | Type         | Description |
+|---------------|--------------|-------------|
+| `record_id`   | INTEGER (PK) | Record primary key |
+| `animal_id`   | TEXT (FK)    | Links to core table |
+| `record_date` | DATE         | Date of health event |
 | `record_type` | TEXT         | `Vaccination`, `Treatment`, `Deworming`, `Injury`, `Symptom` |
-| `cost`        | REAL         | Event cost                                                   |
+| `cost`        | REAL         | Event cost |
 
 ### Production Records Tables (e.g., `goat_production_records`)
 
-| Column          | Type         | Description                          |
-| --------------- | ------------ | ------------------------------------ |
-| `production_id` | INTEGER (PK) | Record primary key                   |
-| `animal_id`     | TEXT (FK)    | Links to core table                  |
-| `record_date`   | DATE         | Date of measurement                  |
+| Column          | Type         | Description |
+|-----------------|--------------|-------------|
+| `production_id` | INTEGER (PK) | Record primary key |
+| `animal_id`     | TEXT (FK)    | Links to core table |
+| `record_date`   | DATE         | Date of measurement |
 | `metric_type`   | TEXT         | Metric type (e.g., `Milk Yield (L)`) |
-| `value`         | REAL         | Measurement value                    |
+| `value`         | REAL         | Measurement value |
 
 ---
 
 ## 🤝 Contributing Guidelines
 
-1. **SQL Safety:** All generated queries must pass `is_sql_safe` (only `SELECT` allowed).
-2. **Species Segregation:** Respect the 12-table schema.
-3. **State Consistency:** Agents must maintain correct `AgentState` across workflow.
+1. **SQL Safety:** All generated queries must pass `is_sql_safe` (only `SELECT` allowed)  
+2. **Species Segregation:** Respect the 12-table schema  
+3. **State Consistency:** Agents must maintain correct `AgentState` across workflow  
 
 ---
 
@@ -148,6 +145,4 @@ The database is fully **segregated** to prevent accidental cross-species queries
 
 ## ⚖️ License
 
-This project is open-source under the **MIT License**.
-
-
+This project is open-source under the **MIT License**
