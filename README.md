@@ -131,9 +131,7 @@ Launches the interactive CLI for querying livestock data.
 
 ## 🤝 Contributing Guidelines
 
-1. **SQL Safety:** All generated queries must pass `is_sql_safe` (only `SELECT` allowed)  
-2. **Species Segregation:** Respect the 12-table schema  
-3. **State Consistency:** Agents must maintain correct `AgentState` across workflow  
+Contributors welcome! Please open an issue or submit a pull request.
 
 ---
 
