@@ -19,9 +19,7 @@ The agent focuses primarily on **translating natural language queries into safe 
 ---
 
 ## 📊 Agent Interconnection Diagram
-
-https://github.com/NickeyMaina/AgriWealth-LangGraph-System/blob/main/agriwealth-livestock-agent/workflow.png?raw=true
-
+<img width="1024" height="1024" alt="Image" src="https://github.com/user-attachments/assets/c1afe1c8-57e4-4ff7-8d35-808a499d0382" />
 ---
 
 ## 📁 Files & Modules Overview
